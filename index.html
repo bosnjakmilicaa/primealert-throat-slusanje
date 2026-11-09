@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="sr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1f5fae">
+<title>Test slušanja · PrimeAlert</title>
+<style>
+:root{--bg:#f3f5f9;--card:#fff;--tx:#18202b;--mut:#5b6575;--line:#dfe3ea;--pri:#1f5fae;--pritx:#fff;--ok:#1e8e5a;--okbg:#e3f3ea;--note:#fff3e0;--play:#eef3fb;--track:#e4e8ef}
+@media (prefers-color-scheme:dark){:root{--bg:#0f141b;--card:#18202b;--tx:#e8edf4;--mut:#9aa6b6;--line:#2c3746;--pri:#4d8fe0;--pritx:#fff;--ok:#3cc483;--okbg:#153223;--note:#33260f;--play:#1d2a3b;--track:#28344a}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;-webkit-text-size-adjust:100%}
+.top{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px}
+.brand{max-width:640px;margin:0 auto;font-size:13px;color:var(--mut);display:flex;justify-content:space-between;gap:8px}
+.brand b{color:var(--tx);font-weight:700}
+.bar{max-width:640px;margin:8px auto 0;height:6px;background:var(--track);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--pri);transition:width .35s}
+main{max-width:640px;margin:0 auto;padding:16px 16px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin:0 0 16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+h1{font-size:23px;line-height:1.25;margin:0 0 6px}h2{font-size:19px;line-height:1.3;margin:0 0 8px}p{margin:8px 0}
+.mut{color:var(--mut);font-size:14px}
+ul{padding-left:20px;margin:10px 0}li{margin:5px 0}
+.btn{display:block;width:100%;min-height:52px;border:0;border-radius:12px;font:600 17px/1 inherit;font-family:inherit;background:var(--pri);color:var(--pritx);cursor:pointer;margin-top:14px}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.sec{background:transparent;color:var(--pri);border:1.5px solid var(--pri)}
+.play{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:0 14px;margin:8px 0;border:1.5px solid var(--line);border-radius:12px;background:var(--play);color:var(--tx);font:600 16px/1.2 inherit;font-family:inherit;cursor:pointer;overflow:hidden;text-align:left}
+.play .ic{width:34px;height:34px;border-radius:50%;background:var(--pri);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex:none}
+.play .lb{flex:1}
+.play .st{font-size:12px;color:var(--mut);font-weight:500;white-space:nowrap}
+.play .pr{position:absolute;left:0;bottom:0;height:4px;width:0;background:var(--pri)}
+.play.ref{border-color:var(--pri)}
+.play.done{border-color:var(--ok)}.play.done .ic{background:var(--ok)}.play.done .st{color:var(--ok)}
+.choice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.lead{font-weight:600;margin:16px 0 4px}
+.choice .opt:last-child:nth-child(odd){grid-column:1 / -1}
+.opt{min-height:56px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--tx);font:600 16px/1.2 inherit;font-family:inherit;cursor:pointer}
+.opt.sel{border-color:var(--pri);background:var(--play);box-shadow:inset 0 0 0 1.5px var(--pri)}
+.opt:disabled{opacity:.35}
+.field{margin:14px 0}.field label{display:block;font-weight:600;margin-bottom:6px}
+input[type=text],select,textarea{width:100%;font:16px/1.4 inherit;font-family:inherit;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--tx)}
+.chk{display:flex;gap:12px;align-items:flex-start;margin:14px 0;cursor:pointer}.chk input{width:22px;height:22px;margin:2px 0 0;flex:none}
+.sl{padding:10px 0 14px;border-top:1px solid var(--line)}.sl:first-of-type{border-top:0}
+.slh{display:flex;align-items:center;gap:10px}.slh .play{flex:1;margin:0}
+.val{min-width:46px;text-align:center;font-size:21px;font-weight:700;color:var(--mut)}.val.on{color:var(--pri)}
+input[type=range]{width:100%;height:40px;accent-color:var(--pri);margin:6px 0 0}
+.ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--mut);padding:0 2px}
+.legend{display:flex;justify-content:space-between;font-size:12px;color:var(--mut);background:var(--play);border-radius:10px;padding:8px 12px;margin:10px 0}
+.note{background:var(--note);border-radius:10px;padding:10px 12px;font-size:14px;margin:10px 0}
+.okbox{text-align:center;padding:30px 16px}
+.big{width:76px;height:76px;border-radius:50%;background:var(--okbg);color:var(--ok);font-size:42px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.spin{width:44px;height:44px;border:4px solid var(--track);border-top-color:var(--pri);border-radius:50%;animation:s 1s linear infinite;margin:6px auto 14px}
+@keyframes s{to{transform:rotate(360deg)}}
+.steps{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;margin:12px 0}.steps span:nth-child(odd){font-weight:700;color:var(--pri)}
+</style></head><body>
+<div class="top"><div class="brand"><span><b>PrimeAlert</b> · FTN Novi Sad</span><span id="faza"></span></div><div class="bar"><i id="bar"></i></div></div>
+<main id="app"></main>
+<script>
+"use strict";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzotAhPjAI-r1GI2tpU6gHef4Ggn0iFuJ8TbZj_VdskAB8qfgmI-KIMaMfxL8-Ho79Z/exec", VER = "v3", BR_PONAVLJANJA = 2;
+const KEY = "primealert_throat_slusanje_" + VER, $ = id => document.getElementById(id), app = $("app");
+let MAN = null, NAKON = null; const BLOB = {};
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+function fresh(){return {verzija:VER,sesija:uid(),meta:{},pocetak:null,kraj:null,slusalice_test:null,odgovori:[],plan:null,pauza:false,pos:{f:"uvod",i:0},poslato:false};}
+let S = fresh();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function load(){try{const s=localStorage.getItem(KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
+function hdr(t,frac){$("faza").textContent=t||"";$("bar").style.width=Math.round(100*Math.max(0,Math.min(1,frac||0)))+"%";}
+const ukupno = () => S.plan ? S.plan.length : 1;
+const uradjeno = () => S.odgovori.length;
+const ime = () => (S.meta.ime_prezime || "").split(" ")[0];
+
+/* ---------- zvuk ---------- */
+const player = new Audio(); player.preload = "auto"; let cur = null, raf = 0;
+function stopAll(){player.pause();cancelAnimationFrame(raf);if(cur){cur.querySelector(".ic").textContent="▶";}cur=null;}
+function playCode(code, btn, onDone){
+  stopAll(); player.src = BLOB[code] || ("audio/" + code + ".wav"); player.currentTime = 0;
+  const p = player.play(); if (p && p.catch) p.catch(()=>{});
+  cur = btn; btn.querySelector(".ic").textContent = "■";
+  const pr = btn.querySelector(".pr"); pr.style.width = "0";
+  const tick = () => { if (player.duration) pr.style.width = (100 * player.currentTime / player.duration) + "%"; raf = requestAnimationFrame(tick); }; tick();
+  player.onended = () => { pr.style.width = "100%"; btn.classList.add("done"); btn.querySelector(".st").textContent = "✓ preslušano"; stopAll(); if (onDone) onDone(); };
+}
+const pbtn = (id, label, cls="") => `<button class="play ${cls}" id="${id}"><span class="ic">▶</span><span class="lb">${label}</span><span class="st">nije preslušano</span><span class="pr"></span></button>`;
+function bindPlay(id, code, onDone, onStart){const b=$(id);b.onclick=()=>{if(cur===b){stopAll();return;}if(onStart)onStart();playCode(code,b,onDone);};}
+
+let actx = null;
+function tone(pan){
+  if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+  if(actx.state === "suspended") actx.resume();
+  const o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime;
+  o.frequency.value = 600; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.25, t+0.03);
+  g.gain.setValueAtTime(0.25, t+0.75); g.gain.linearRampToValueAtTime(0, t+0.8); o.connect(g);
+  if (actx.createStereoPanner){const p=actx.createStereoPanner();p.pan.value=pan;g.connect(p);p.connect(actx.destination);}
+  else {const m=actx.createChannelMerger(2);g.connect(m,0,pan<0?0:1);m.connect(actx.destination);}
+  o.start(t); o.stop(t+0.82);
+}
+
+/* ---------- manifest, učitavanje, plan ---------- */
+async function loadManifest(){const r=await fetch("manifest.json",{cache:"no-store"});if(!r.ok)throw new Error("manifest");MAN=await r.json();}
+function sviKodovi(){const s=new Set();MAN.uvod.forEach(u=>{s.add(u.obican);s.add(u.throat);});
+  MAN.recenice.forEach(t=>{s.add(t.ref);t.snimci.forEach(c=>s.add(c));});return [...s];}
+async function preload(onp){
+  const cs = sviKodovi(), q = cs.filter(c => !BLOB[c]); let n = cs.length - q.length; onp(n, cs.length);
+  async function worker(){ while(q.length){ const c = q.shift();
+    for(let k=0;k<3;k++){ try{ const r = await fetch("audio/"+c+".wav"); if(!r.ok) throw 0; BLOB[c] = URL.createObjectURL(await r.blob()); break; }
+      catch(e){ if(k===2) throw new Error("audio "+c); await new Promise(z=>setTimeout(z,800)); } }
+    n++; onp(n, cs.length); } }
+  await Promise.all([worker(), worker(), worker(), worker()]);
+}
+function napraviPlan(){
+  const seq = shuffle(MAN.recenice.map(t => ({stim:t.id, ref:t.ref, snimci:shuffle(t.snimci), ponovljen:false})));
+  shuffle(seq.slice(0, seq.length - 6)).slice(0, BR_PONAVLJANJA).forEach(t => {     // ponovljeni primer, drugi redosled snimaka
+    let sn = shuffle(t.snimci); while (sn.join() === t.snimci.join()) sn = shuffle(t.snimci);
+    const r = {...t, snimci: sn, ponovljen: true}, od = seq.indexOf(t) + 5;
+    seq.splice(od + Math.floor(Math.random() * (seq.length - od + 1)), 0, r);
+  });
+  S.plan = seq;
+}
+
+/* ---------- ekrani ---------- */
+function renderUvod(){
+  hdr("Dobro došli",0);
+  app.innerHTML = `<div class="card"><h1>Test slušanja</h1>
+  <p class="mut">Projekat PrimeAlert · Katedra za telekomunikacije i obradu signala, Fakultet tehničkih nauka, Novi Sad</p>
+  <p>Throat mikrofon se nosi na vratu i snima vibracije grla, pa govor zvuči drugačije nego sa običnim mikrofonom. Razvili smo nekoliko metoda koje od običnog snimka prave zvuk „kao sa throat mikrofona”. Vaš zadatak je da za svaku rečenicu izaberete verziju koja <b>najviše liči na pravi throat snimak</b>.</p>
+  <div class="steps"><span>1</span><span>Kratak uvod: kako zvuči throat mikrofon</span><span>2</span><span>Izbor najsličnijeg snimka (${MAN.recenice.length + BR_PONAVLJANJA} primera)</span></div>
+  <ul><li><b>Trajanje:</b> oko 15–20 minuta.</li><li><b>Preporuka:</b> slušalice i tiha prostorija, ali može i preko zvučnika telefona ili računara.</li><li>Rečenice su na francuskom — razumevanje nije važno.</li><li>Nema tačnih ni pogrešnih odgovora; svaki snimak možete preslušati više puta.</li><li>Ako prekinete, napredak ostaje sačuvan na ovom uređaju.</li></ul>
+  <p class="mut">Učešće je dobrovoljno i možete odustati u bilo kom trenutku. Odgovori se koriste isključivo u istraživačke svrhe; u analizi i publikacijama učesnici su anonimni.</p>
+  <label class="chk"><input type="checkbox" id="sg"><span>Pročitao/la sam opis i pristajem da učestvujem.</span></label>
+  <button class="btn" id="nx" disabled>Započni</button></div>`;
+  $("sg").onchange = () => { $("nx").disabled = !$("sg").checked; };
+  $("nx").onclick = () => { S.meta.saglasnost = true; S.meta.saglasnost_vreme = new Date().toISOString(); go("podaci"); };
+}
+function renderPodaci(){
+  hdr("Podaci o slušaocu",0);
+  app.innerHTML = `<div class="card"><h2>Podaci o slušaocu</h2>
+  <div class="field"><label for="ip">Ime i prezime</label><input type="text" id="ip" autocomplete="name" placeholder="npr. Ana Petrović"></div>
+  <div class="field"><label for="sl">Na čemu slušate?</label><select id="sl"><option value="">— izaberite —</option><option value="bubice">Bubice (u uvu)</option><option value="preko_usiju">Slušalice preko ušiju</option><option value="zvucnik">Zvučnik (telefon ili računar)</option></select></div>
+  <div id="slw"></div>
+  <div class="field"><label for="is">Iskustvo sa obradom zvuka ili govora</label><select id="is"><option value="">— izaberite —</option><option value="nema">Nemam</option><option value="nesto">Nešto (studije, hobi)</option><option value="strucno">Stručno</option></select></div>
+  <button class="btn" id="nx" disabled>Nastavi</button></div>`;
+  const chk = () => { const okIme = /\S+\s+\S+/.test($("ip").value.trim()), sl = $("sl").value;
+    $("slw").innerHTML = sl === "zvucnik" ? `<div class="note">Može i preko zvučnika. Slušajte u tihoj prostoriji, a ako možete, pojačajte zvuk tako da jasno čujete razlike.</div>` : "";
+    $("nx").disabled = !(okIme && sl && $("is").value); };
+  ["ip","sl","is"].forEach(id => { $(id).oninput = chk; $(id).onchange = chk; });
+  if (S.meta.ime_prezime) $("ip").value = S.meta.ime_prezime;
+  $("nx").onclick = () => { S.meta.ime_prezime = $("ip").value.trim().replace(/\s+/g, " "); S.meta.slusalice = $("sl").value; S.meta.iskustvo = $("is").value;
+    S.meta.uredjaj = {ua: navigator.userAgent, ekran: screen.width + "x" + screen.height}; S.pocetak = new Date().toISOString();
+    if (!S.plan) napraviPlan(); NAKON = null; go("ucitavanje"); };
+}
+async function renderUcitavanje(){
+  hdr("Priprema",0);
+  app.innerHTML = `<div class="card okbox"><div class="spin"></div><h2>Učitavanje snimaka</h2><p class="mut" id="pp">0 %</p><p class="mut">Preporučuje se Wi-Fi (oko 18 MB).</p></div>`;
+  try { await preload((n,N) => { const e = $("pp"); if (e) e.textContent = Math.round(100*n/N) + " %"; });
+    const t = NAKON; NAKON = null; if (t) { S.pos = t; save(); route(); } else go(S.meta.slusalice === "zvucnik" ? "trening" : "lr"); }
+  catch(e){ app.innerHTML = `<div class="card"><h2>Snimci se nisu učitali</h2><div class="note">Proverite internet vezu i pokušajte ponovo.</div><button class="btn" id="rt">Pokušaj ponovo</button></div>`; $("rt").onclick = () => renderUcitavanje(); }
+}
+function renderLR(){
+  hdr("Provera slušalica",0);
+  const seq = shuffle(["L","R","L","R"]); let i = 0, ok = 0;
+  const korak = () => {
+    app.innerHTML = `<div class="card"><h2>Provera slušalica</h2><p>Stavite slušalice. Čućete kratak ton <b>samo u jednom uhu</b> — izaberite u kom.</p><p class="mut">Ton ${i+1} od ${seq.length}</p>
+    <button class="play ref" id="t"><span class="ic">▶</span><span class="lb">Pusti ton</span><span class="st"></span><span class="pr"></span></button>
+    <div class="choice"><button class="opt" id="l" disabled>Levo uvo</button><button class="opt" id="r" disabled>Desno uvo</button></div></div>`;
+    $("t").onclick = () => { tone(seq[i] === "L" ? -1 : 1); $("l").disabled = $("r").disabled = false; };
+    const odg = s => { if (s === seq[i]) ok++; i++; if (i < seq.length) korak(); else kraj(); };
+    $("l").onclick = () => odg("L"); $("r").onclick = () => odg("R");
+  };
+  const kraj = () => {
+    const t = S.slusalice_test || {pokusaji:0, tacno:[]}; t.pokusaji++; t.tacno.push(ok); t.prosao = ok === seq.length; S.slusalice_test = t; save();
+    if (ok === seq.length) { go("trening"); return; }
+    app.innerHTML = `<div class="card"><h2>Proverite slušalice</h2><div class="note">Tačno ${ok} od ${seq.length}. Proverite da su slušalice pravilno postavljene (leva na levom, desna na desnom uhu) i da zvuk ide u oba uha.</div>
+    <button class="btn" id="ag">Pokušaj ponovo</button>${t.pokusaji >= 2 ? `<button class="btn sec" id="sk">Nastavi svejedno</button>` : ""}</div>`;
+    $("ag").onclick = () => renderLR(); if ($("sk")) $("sk").onclick = () => go("trening");
+  };
+  korak();
+}
+function renderTrening(){
+  hdr("Uvod",0); const U = MAN.uvod;
+  let h = `<div class="card"><h2>Kako zvuči throat mikrofon</h2><p>Isti govor je snimljen istovremeno običnim mikrofonom ispred usta i throat mikrofonom na vratu. Preslušajte sve snimke do kraja.</p><div class="note">Podesite jačinu tako da vam bude prijatna i ne menjajte je do kraja testa.</div>`;
+  U.forEach((u,j) => { h += `<p class="lead">Primer ${j+1}</p>${pbtn("o"+j,"Običan mikrofon")}${pbtn("t"+j,"Throat mikrofon","ref")}`; });
+  app.innerHTML = h + `<button class="btn" id="nx" disabled>Dalje</button></div>`;
+  const ok = new Set(), chk = () => { $("nx").disabled = ok.size < 2*U.length; };
+  U.forEach((u,j) => { bindPlay("o"+j, u.obican, () => { ok.add("o"+j); chk(); }); bindPlay("t"+j, u.throat, () => { ok.add("t"+j); chk(); }); });
+  $("nx").onclick = () => go("uputstvo");
+}
+function renderUputstvo(){
+  hdr("Uputstvo", uradjeno()/ukupno());
+  app.innerHTML = `<div class="card"><h2>Koji snimak je najsličniji?</h2>
+  <p>U svakom primeru čujete <b>referencu</b> (pravi throat mikrofon) i <b>${MAN.recenice[0].snimci.length} snimaka</b> iste rečenice. Izaberite snimak koji <b>zvuči najsličnije referenci</b>.</p>
+  <ul><li>Obratite pažnju na zvuk: boju, prigušenost, šum i jasnoću — ne na sadržaj.</li><li>Razlike su ponekad male; ako vam se snimci čine slični, ipak izaberite onaj koji vam deluje najbliže.</li><li>Referencu i sve snimke treba preslušati do kraja bar jednom; možete ih slušati više puta.</li><li>Neki primeri se ponavljaju — odgovorite kako čujete, bez prisećanja.</li></ul>
+  <p class="mut">${S.plan.length} primera · oko 15 minuta</p><button class="btn" id="go">Počni</button></div>`;
+  $("go").onclick = () => go("T", S.odgovori.length);
+}
+function renderT(){
+  const n = S.plan.length, i = S.pos.i; if (i >= n) { go("komentar"); return; }
+  if (i === Math.floor(n/2) && !S.pauza) {
+    hdr(`${i} / ${n}`, uradjeno()/ukupno());
+    app.innerHTML = `<div class="card okbox"><div class="big">½</div><h2>Pola testa je za vama</h2><p>Odlično ide. Ako želite, napravite kratku pauzu.</p><button class="btn" id="c">Nastavi</button></div>`;
+    $("c").onclick = () => { S.pauza = true; save(); renderT(); }; return;
+  }
+  const t = S.plan[i], K = t.snimci.length, cnt = {ref:0}, ok = {ref:false}, t0 = Date.now(); let izbor = null;
+  t.snimci.forEach(c => { cnt[c] = 0; ok[c] = false; });
+  hdr(`${i+1} / ${n}`, uradjeno()/ukupno());
+  let h = `<div class="card"><h2>Koji snimak zvuči najsličnije referenci?</h2><p class="mut">Preslušajte referencu i sve snimke do kraja, pa izaberite.</p>${pbtn("pr","Referenca · pravi throat","ref")}`;
+  t.snimci.forEach((c,k) => { h += pbtn("p"+k, "Snimak " + (k+1)); });
+  h += `<div class="choice">` + t.snimci.map((c,k) => `<button class="opt" id="c${k}">Snimak ${k+1}</button>`).join("") + `</div><button class="btn" id="nx" disabled>Dalje</button></div>`;
+  app.innerHTML = h;
+  const chk = () => { $("nx").disabled = !(Object.values(ok).every(x => x) && izbor !== null); };
+  bindPlay("pr", t.ref, () => { ok.ref = true; chk(); }, () => cnt.ref++);
+  t.snimci.forEach((c,k) => {
+    bindPlay("p"+k, c, () => { ok[c] = true; chk(); }, () => cnt[c]++);
+    $("c"+k).onclick = () => { izbor = k; t.snimci.forEach((_,j) => $("c"+j).classList.toggle("sel", j === k)); chk(); };
+  });
+  $("nx").onclick = () => { S.odgovori.push({redni_broj:i+1, stim:t.stim, ref:t.ref, izbor:t.snimci[izbor], izbor_pozicija:izbor+1,
+    redosled:t.snimci, ponovljen:t.ponovljen, reprodukcija:cnt, vreme_ms:Date.now()-t0}); go("T", i+1); };
+}
+function renderKomentar(){
+  hdr("Kraj", 1);
+  app.innerHTML = `<div class="card"><h2>Skoro gotovo</h2><p>Ako želite, napišite kratak komentar: po čemu ste birali, šta ste primetili, da li je nešto bilo nejasno ili teško.</p>
+  <div class="field"><label for="km">Komentar <span class="mut">(nije obavezno)</span></label><textarea id="km" rows="4" maxlength="2000"></textarea></div>
+  <button class="btn" id="sn">Pošalji rezultate</button></div>`;
+  $("km").value = S.meta.komentar || "";
+  $("sn").onclick = () => { S.meta.komentar = $("km").value.trim(); S.kraj = new Date().toISOString(); go("slanje"); };
+}
+const rezultat = () => ({verzija:S.verzija, sesija:S.sesija, meta:S.meta, pocetak:S.pocetak, kraj:S.kraj, slusalice_test:S.slusalice_test, odgovori:S.odgovori});
+async function posalji(){
+  const body = JSON.stringify(rezultat());
+  for (let k = 0; k < 3; k++) {
+    try { const r = await fetch(SCRIPT_URL, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body});
+      const j = await r.json(); if (j && j.ok) return "ok"; } catch(e) {}
+    await new Promise(z => setTimeout(z, 1500*(k+1)));
+  }
+  try { await fetch(SCRIPT_URL, {method:"POST", mode:"no-cors", headers:{"Content-Type":"text/plain;charset=utf-8"}, body}); return "nepotvrdjeno"; }
+  catch(e) { return "greska"; }
+}
+async function renderSlanje(){
+  hdr("Slanje", 1);
+  app.innerHTML = `<div class="card okbox"><div class="spin"></div><h2>Šaljemo rezultate…</h2><p class="mut">Ne zatvarajte stranicu.</p></div>`;
+  const st = await posalji();
+  if (st === "greska") {
+    app.innerHTML = `<div class="card"><h2>Slanje nije uspelo</h2><div class="note">Proverite internet vezu i pokušajte ponovo. Vaši odgovori su sačuvani na ovom uređaju.</div>
+    <button class="btn" id="rt">Pošalji ponovo</button><button class="btn sec" id="dl">Sačuvaj rezultate kao fajl</button></div>`;
+    $("rt").onclick = () => renderSlanje(); $("dl").onclick = preuzmi; return;
+  }
+  S.poslato = st; go("hvala");
+}
+function preuzmi(){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(rezultat(),null,1)],{type:"application/json"}));
+  a.download="rezultati_"+(S.meta.ime_prezime||"slusalac").replace(/[^\p{L}\p{N}_-]+/gu,"_")+".json";document.body.appendChild(a);a.click();a.remove();}
+function renderHvala(){
+  hdr("Završeno", 1); const nep = S.poslato === "nepotvrdjeno";
+  app.innerHTML = `<div class="card okbox"><div class="big">✓</div><h1>${nep ? "Rezultati su poslati" : "Uspešno zabeleženo"}</h1>
+  <p>Hvala${ime() ? ", " + esc(ime()) : ""}! Vaši odgovori su ${nep ? "poslati" : "sačuvani"}.</p><p class="mut">Možete zatvoriti ovu stranicu.</p>
+  ${nep ? `<div class="note">Potvrda prijema nije stigla. Radi sigurnosti sačuvajte i kopiju rezultata.</div>` : ""}
+  <button class="btn sec" id="dl">Sačuvaj kopiju rezultata</button><button class="btn sec" id="nw">Novi slušalac na ovom uređaju</button></div>`;
+  $("dl").onclick = preuzmi; $("nw").onclick = () => { try{localStorage.removeItem(KEY);}catch(e){} S = fresh(); route(); };
+}
+function renderNastavak(){
+  hdr("Nastavak", uradjeno()/ukupno());
+  app.innerHTML = `<div class="card"><h2>Dobro došli nazad${ime() ? ", " + esc(ime()) : ""}</h2><p>Test je započet na ovom uređaju (urađeno ${uradjeno()} od ${ukupno()} primera). Možete nastaviti tamo gde ste stali.</p>
+  <button class="btn" id="nt">Nastavi</button><button class="btn sec" id="np">Počni ispočetka</button></div>`;
+  $("nt").onclick = () => { NAKON = S.pos.f === "slanje" ? {f:"komentar", i:0} : S.pos; go("ucitavanje"); };
+  $("np").onclick = () => { try{localStorage.removeItem(KEY);}catch(e){} S = fresh(); route(); };
+}
+const EKRANI = {uvod:renderUvod, podaci:renderPodaci, ucitavanje:renderUcitavanje, lr:renderLR, trening:renderTrening, uputstvo:renderUputstvo, T:renderT,
+                komentar:renderKomentar, slanje:renderSlanje, hvala:renderHvala};
+function route(){ stopAll(); window.scrollTo(0,0); (EKRANI[S.pos.f] || renderUvod)(); }
+function go(f, i = 0){ S.pos = {f, i}; save(); route(); }
+
+(async () => {
+  app.innerHTML = `<div class="card okbox"><div class="spin"></div><p class="mut">Učitavanje…</p></div>`;
+  try { await loadManifest(); }
+  catch(e) { app.innerHTML = `<div class="card"><h2>Test nije moguće učitati</h2><p>Proverite internet vezu i osvežite stranicu.</p></div>`; return; }
+  const old = load();
+  if (old && old.verzija === VER && old.pos && !["uvod","podaci"].includes(old.pos.f)) {
+    S = old; if (S.poslato) { go("hvala"); return; } renderNastavak();
+  } else route();
+})();
+</script></body></html>
